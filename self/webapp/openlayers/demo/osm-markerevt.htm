@@ -1,0 +1,113 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>osm marker event</title>
+<!-- 加载OpenLayers 类库 -->
+<script type="text/javascript" src="OpenLayers.js"></script>
+<style>
+html,body {width:100%;height:100%;margin:0;padding:0}
+</style>
+<!-- 关键代码 -->
+<script type="text/javascript">
+function init(){
+	var map = new OpenLayers.Map("map");
+	
+	//创建一个 OpenStreetMap 的层，并加到地图map中
+	var osm = new OpenLayers.Layer.OSM();
+	map.addLayer(osm);
+	
+	map.zoomToMaxExtent();
+	
+	//构建标注层
+	var markers = new OpenLayers.Layer.Markers("Markers");
+	map.addLayer(markers);
+
+	//定义标注点击后处理冒泡的函数
+	var markerClick = function (evt) {
+		if( this.popup == null ){
+			this.popup = this.createPopup(this.closeBox);
+			map.addPopup(this.popup);
+			this.popup.show();			
+		} else {			
+			this.popup.toggle();			
+		}
+		OpenLayers.Event.stop(evt);
+	}
+	
+	//构建一个标注+冒泡，并绑定事件
+	var ll0 = new OpenLayers.LonLat(5,40);
+	var marker0 = new OpenLayers.Marker(ll0);
+	markers.addMarker(marker0);
+	var popup = new OpenLayers.Popup.FramedCloud("c",
+			ll0,
+			null,
+			"hello 0",
+			null,
+			true,
+			null
+			);
+	marker0.popup = popup;
+	map.addPopup(popup);
+	popup.hide();	
+	marker0.events.register("click",marker0,markerClick);
+	
+	//使用featrue修改popup样式
+	var ll = new OpenLayers.LonLat(-29351,3776600);
+	var feature = new OpenLayers.Feature(markers,ll);
+	feature.closeBox = true;
+	feature.popupClass = OpenLayers.Class(OpenLayers.Popup.FramedCloud,
+				{'autoSize':true});
+	feature.data.popupContentHTML="hello1hello2hello3hello4hello5hello67890";
+	feature.data.overflow = "auto";//"hidden";//
+	
+	var marker = new OpenLayers.Marker(ll);
+	marker.icon.imageDiv.title = "hello marker";
+	markers.addMarker(marker);
+	marker.events.register("mousedown",feature,markerClick);
+	
+	//定义另一种效果
+	var ll1 = new OpenLayers.LonLat(-29351,1776600);
+	var feature1 = new OpenLayers.Feature(markers,ll1);
+	feature1.closeBox = false;	
+	feature1.popupClass = OpenLayers.Class(OpenLayers.Popup.Anchored,
+			{
+				'autoSize':true,
+				'minSize':new OpenLayers.Size(40,40)
+			});
+	feature1.data.popupContentHTML = "hello1";
+	feature1.data.overflow = "hidden";	
+	var marker1 = new OpenLayers.Marker(ll1);
+	marker1.icon.imageDiv.title="hello1 marker";
+	markers.addMarker(marker1);	
+	marker1.events.register("mousedown",feature1,markerClick);
+	
+	//定义一个map移动的函数，关闭所有的popup
+	var mapMove = function(evt) {
+		
+		if(this.popups!=null){
+			for(var i=0;i<this.popups.length;i++){
+				this.popups[i].hide();				
+			}			
+		}
+		
+		OpenLayers.Event.stop(evt);		
+	}
+	
+	map.events.register("move",map,mapMove);
+	
+	map.events.register("addlayer",map,function(e){alert("addlayer")});
+	
+	//加入层切换工具条
+	map.addControl(new OpenLayers.Control.LayerSwitcher({'ascending':false}));
+	var wms = new OpenLayers.Layer.WMS("WMS","http://vmap0.tiles.osgeo.org/wms/vmap0");
+	map.addLayer(wms);
+	
+	map.events.register("changebaselayer",map,function(e){alert("changebaselayer")});
+	
+}
+</script>
+</head>
+<body onload="init()">
+<div id="map" style="width:100%;height:100%"></div>
+</body>
+</html>

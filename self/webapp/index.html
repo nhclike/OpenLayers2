@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>车辆管理系统</title>
+<script type="text/javascript" src="js.js"></script>
+<script type="text/javascript" src="jquery.min.js"></script>
+<script type="text/javascript" src="map.js"></script>
+
+<script type="text/javascript">if(!window.console) console= {log:function(){}};</script>
+<script type="text/javascript">
+var map=null;
+function initialize(){
+	alert('111')
+	console.log('initialize');
+	map=new google.maps.Map(document.getElementById('map'),{
+		center:new google.maps.LatLng(39.9,116.397),
+		zoom:13,
+		mapTypeId:'roadmap',
+		mapTypeControl:false
+	})
+}
+console.log(google.maps.event);
+google.maps.event.addDomListener(window,'load',initialize);
+</script>
+<style>
+body {margin:0px auto;font-family:consolas;color:#333;font-size:14px;}
+input {border-bottom:#ccc 1px solid;border-left:#ccc 1px solid;LINE-HEight:25px;HEIGHT:25px;COLOR:#666;FONT-SIZE:14px;BORDER-TOP:#ccc 1px solid;BORDER-RIGHT:#ccc 1px solid}
+</style>
+</head>
+<body>
+	
+	<center>车辆定位管理系统</center>
+<div id="mytop" style="TEXT-ALIGN:center;PADDING-BOTTOM:2px;MARGIN:0px auto;WIDTH:600px;HEIGHT:30px;PADDING-TOP:2px">
+手机号：<input  name=mobileNo maxLength=11 value="" size=10>
+开始时间：<input name=starttime maxLength=10 value=""  size=10>
+结束时间：<input name=endtime maxLength=10 value=""  size=10>
+<input id="Button1" type=button value="查询" style="HEIGHT:30px;" > 
+<div id=txt style="TEXT-ALIGN:center;PADDING-BOTTOM:0px;MARGIN:0px auto;WIDTH:300px;HEIGHT:0px;PADDING-TOP:0px">地图加载中...</div>
+<div id=resulttxt style="float:left;TEXT-ALIGN:left;PADDING-LEFT:0px;PADDING-BOTTOM:0px;MARGIN:0px auto;WIDTH:80px;HEIGHT:650px;PADDING-TOP:0px;FONT-SIZE:11px"></div>
+<div id=map style="float:left;TEXT-ALIGN:right;PADDING-BOTTOM:1px;MARGIN:0px auto;WIDTH:85%;HEIGHT:650px;PADDING-TOP:1px;BORDER:#ccc 1px solid;"></div>
+<!-- <script >
+var m=new Map();
+document.write('</br>m'+m+'</br>');
+m.put(1,2);
+m.put(2,4);
+console.log(m);
+document.write('m.isEmpty'+m.isEmpty()+'</br>');
+document.write('m.keys'+m.keys()+'</br>');
+document.write('m.value'+m.values()+'</br>');
+
+</script> -->
+</body>
+</html>

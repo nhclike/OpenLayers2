@@ -1,0 +1,119 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>osm v</title>
+<link rel="stylesheet" href="theme/default/style.css" type="text/css">
+<!-- 加载OpenLayers 类库 -->
+<script type="text/javascript" src="OpenLayers.js"></script>
+<style>
+html,body {width:100%;height:100%;margin:0;padding:0}
+</style>
+<!-- 关键代码 -->
+<script type="text/javascript">
+var map;
+function init(){
+	map = new OpenLayers.Map("map");
+	
+	//创建一个 OpenStreetMap 的层，并加到地图map中
+	var osm = new OpenLayers.Layer.OSM();
+	map.addLayer(osm);
+	
+	//定义允许Canvas的renderers “?renderer=Canvas”
+	var renderer = OpenLayers.Util.getParameters(window.location.href).renderer;
+	renderer = (renderer) ? [renderer] : OpenLayers.Layer.Vector.prototype.renderers;
+	
+	//层样式，我们可以扩展 并自定义样式
+	var layer_style = OpenLayers.Util.extend({},
+			OpenLayers.Feature.Vector.style["default"]			
+	);	
+	layer_style.fillOpacity = 0.2; //填充的透明度
+	layer_style.graphicOpacity = 0.5;//图片透明度
+	
+	//蓝色五角星 样式
+	var style_blue = OpenLayers.Util.extend({},OpenLayers.Feature.Vector.style["default"]);//layer_style
+	style_blue.strokeColor = "blue";
+	style_blue.fillColor = "blue";
+	style_blue.graphicName = "star";
+	style_blue.pointRadius = 20;
+	style_blue.strokeWidth = 1;
+	style_blue.rotation = 45;
+	style_blue.strokeLinecap = "butt";
+	
+	//绿样式 点线
+	var style_green = {
+			strokeColor:"#00FF00",
+			strokeWidth:3,
+			strokeDashstyle:"dashdot",
+			pointRadius:20,
+			pointerEvents:"visiblePainted"
+	};
+	
+	//标注的样式
+	var style_mark = OpenLayers.Util.extend({},layer_style);
+	style_mark.graphicWidth = 24;
+	style_mark.graphicHeight = 20;
+	style_mark.graphicXOffset =  -(style_mark.graphicWidth/2); //缺省 -(style_mark.graphicWidth/2)
+	style_mark.graphicYOffset = -style_mark.graphicHeight;
+	style_mark.externalGraphic = "img/marker.png";
+	//title
+	style_mark.graphicTitle = "this is a tooltip";
+	
+	//构建绘图层
+	var vectorLayer = new OpenLayers.Layer.Vector("vector",
+			{
+				style:layer_style,
+				renderers:renderer
+			});
+	map.addLayer(vectorLayer);
+	
+	//构建点
+	var point = new OpenLayers.Geometry.Point(0,45);
+	var pointFeature = new OpenLayers.Feature.Vector(point,null,style_blue);
+	var point2 = new OpenLayers.Geometry.Point(-10500,3776600);	
+	var pointFeature2 = new OpenLayers.Feature.Vector(point2,null,style_green);
+	var point3 = new OpenLayers.Geometry.Point(-10500,1776600);
+	var pointFeature3 = new OpenLayers.Feature.Vector(point3,null,style_mark);
+	
+	//画线
+	var pointList = [];
+	var newPoint = point;
+	for(var p=0;p<15;++p){		
+		newPoint = new OpenLayers.Geometry.Point(newPoint.x + (Math.random(1)*1000000),
+										newPoint.y + (Math.random(1)*1000000)		
+								);
+		pointList.push(newPoint);
+	}
+	var lineFeature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LineString(pointList),null,style_green);
+	
+	//画多边形,缺省样式
+	var points = [];
+	for(var p=0;p<6;++p){
+		var a = p*(2*Math.PI)/7;
+		var r = Math.random(1)*1000000;
+		var newPoint = new OpenLayers.Geometry.Point(-1000000+point.x+(r*Math.cos(a)),
+													-1000000+point.y+(r*Math.sin(a))
+		);		
+		points.push(newPoint);		
+	}
+	points.push(points[0]);
+	var linearRing = new OpenLayers.Geometry.LinearRing(points);
+	var polygonFeature = new OpenLayers.Feature.Vector(
+								new OpenLayers.Geometry.Polygon([linearRing])		
+	);
+	
+	vectorLayer.addFeatures([pointFeature
+	                         ,pointFeature2
+	                         ,pointFeature3
+	                         ,lineFeature
+	                         ,polygonFeature]);
+
+	map.zoomToMaxExtent();
+}
+</script>
+</head>
+<body onload="init()">
+<div id="map" style="width:100%;height:100%"></div>
+</body>
+</html>

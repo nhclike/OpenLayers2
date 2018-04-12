@@ -1,0 +1,58 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>osm point</title>
+<!-- 加载OpenLayers 类库 -->
+<script type="text/javascript" src="OpenLayers.js"></script>
+<style>
+html,body {width:100%;height:100%;margin:0;padding:0}
+</style>
+<!-- 关键代码 -->
+<script type="text/javascript">
+var vector_point,geojson;
+function init(){
+	var map = new OpenLayers.Map("map");
+	
+	//创建一个 OpenStreetMap 的层，并加到地图map中
+	var osm = new OpenLayers.Layer.OSM();
+	
+	//创建一个点图层，用来展现我们从后台获取的点信息
+	vector_point = new OpenLayers.Layer.Vector();
+	//将地图和点图层加载到map
+	map.addLayers([osm,vector_point]);
+	//创建GeoJSON类对象，用于解析JSON串
+	geojson = new OpenLayers.Format.GeoJSON();
+	
+	map.zoomToMaxExtent();
+}
+
+//1.可以使用ajax从后台后去json，这里我们假设已经获取到了json串：
+var jsons = {"type":"FeatureCollection",
+			 "features":[{
+				 "type":"Feature",
+				 "geometry":{
+					 "type":"Point",
+					 "coordinates":[5,43]
+				 }
+			 	},{
+					 "type":"Feature",
+					 "geometry":{
+						 "type":"Point",
+						 "coordinates":[124,4300000]
+					 }					 
+				 }
+				 ]
+			};
+
+//2.通过后台获取到json串后，调用addJson()方法后将点展示到页面
+function addJson(){
+	vector_point.addFeatures(geojson.read(jsons));
+}
+
+</script>
+</head>
+<body onload="init()">
+<div id="map" style="width:100%;height:100%"></div>
+<input type=button onclick='addJson();' value="showme">
+</body>
+</html>
