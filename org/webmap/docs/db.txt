@@ -1,0 +1,38 @@
+create database webmap;
+
+use webmap;
+
+create table location (
+	id INT NULL AUTO_INCREMENT,
+	mobile VARCHAR(256) NULL,
+	sno VARCHAR(256) NULL,
+	cno VARCHAR(256) NULL,
+	pdatetime TIMESTAMP NULL,
+	lat VARCHAR(256) NULL,
+	lng VARCHAR(256) NULL,
+	cellid VARCHAR(45) NULL,
+	lac VARCHAR(45) NULL,
+	PRIMARY KEY(id)
+)
+DEFAULT CHARACTER SET = utf8;
+
+INSERT INTO location(mobile,sno,cno,pdatetime,lat,lng,cellid,lac)
+VALUES("15823456789","s1","c1","2012-12-08 11:00:00","39.868795","116.268116","53951","29547");
+INSERT INTO location(mobile,sno,cno,pdatetime,lat,lng,cellid,lac)
+VALUES("15823456789","s1","c1","2012-12-08 10:00:00","39.868795","116.266116","53951","29547");
+INSERT INTO location(mobile,sno,cno,pdatetime,lat,lng,cellid,lac)
+VALUES("15823456789","s1","c1","2012-12-08 09:00:00","39.868795","116.264116","53951","29547");
+INSERT INTO location(mobile,sno,cno,pdatetime,lat,lng,cellid,lac)
+VALUES("15823456777","s2","c2","2012-12-08 09:00:00","39.866795","116.264116","53951","29547");
+INSERT INTO location(mobile,sno,cno,pdatetime,lat,lng,cellid,lac)
+VALUES("15823456777","s2","c2","2012-12-08 09:00:00","39.866795","116.266116","53951","29547");
+
+//A.什么参数都不带，取所有车辆最新数据
+String sql= "SELECT * FROM webmap.location x WHERE pdatetime = (SELECT max(pdatetime) FROM webmap.location y WHERE x.mobile = y.mobile) ORDER BY pdatetime ASC"
+
+//B.只有手机号，没有时间，去该号最近1条数据
+String sql = "SELECT * FROM webmap.location y WHERE y.mobile=' "+mobileNo+" ' ORDER BY y.pdatetime ASC limit 50"
+SELECT * FROM webmap.location y WHERE y.mobile='15823456789' ORDER BY y.pdatetime ASC limit 50;
+
+//C.有手机号，有时间，取该手机号该时间内所有轨迹数据
+SELECT * FROM webmap.location y WHERE y.mobile='15823456789' and y.pdatetime>='2012-12-07' and y.pdatetime<='2012-12-09 24:00:00' ORDER BY y.pdatetime ASC;

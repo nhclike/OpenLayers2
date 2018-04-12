@@ -1,0 +1,56 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>osm popup</title>
+<!-- 加载OpenLayers 类库 -->
+<script type="text/javascript" src="OpenLayers.js"></script>
+<style>
+html,body {width:100%;height:100%;margin:0;padding:0}
+</style>
+<!-- 关键代码 -->
+<script type="text/javascript">
+function init(){
+	var map = new OpenLayers.Map("map");
+	
+	//创建一个 OpenStreetMap 的层，并加到地图map中
+	var osm = new OpenLayers.Layer.OSM();
+	map.addLayer(osm);
+	
+	map.zoomToMaxExtent();
+	
+	//增加一个冒泡popup
+	var popup0 = new OpenLayers.Popup("chicken",
+			new OpenLayers.LonLat(-29351,3776600),
+			new OpenLayers.Size(200,200),
+			"hello popup",
+			true
+			);
+		map.addPopup(popup0);
+		
+	//加入标注层
+	var markers = new OpenLayers.Layer.Markers("Markers");
+	map.addLayer(markers);
+	
+	var popup = new OpenLayers.Popup.Anchored("Example",
+			new OpenLayers.LonLat(5,40),
+			new OpenLayers.Size(200,200),
+			"Welcome to ...");
+	
+	map.addPopup(popup);
+	popup.hide();
+	
+	//绑定冒泡给一个标注
+	var marker = new OpenLayers.Marker(new OpenLayers.LonLat(5,40));
+	markers.addMarker(marker);
+	
+	marker.events.register("click",marker,function(e){popup.toggle()});
+	
+
+	
+}
+</script>
+</head>
+<body onload="init()">
+<div id="map" style="width:100%;height:100%"></div>
+</body>
+</html>

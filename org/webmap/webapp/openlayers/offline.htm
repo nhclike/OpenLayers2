@@ -1,0 +1,72 @@
+<html>
+<head>
+<title>offline map</title>
+<link rel="stylesheet" href="css/style.css" type="text/css" />
+<script type="text/javascript" src="OpenLayers.js"></script>
+<script>
+var map,layer;
+
+function init(){
+	
+	map = new OpenLayers.Map("map",{
+		maxExtent: new OpenLayers.Bounds(
+		-20037508.3427892,
+		-20037508.3427892,
+		20037508.3427892,
+		20037508.3427892
+		),
+		numZoomLevels:18,
+		maxResolution:156543.0339,
+		units:'m',
+		projection:"EPSG:900913",
+		displayProjection: new OpenLayers.Projection("EPSG:4326")
+	});
+	
+	layer = new OpenLayers.Layer.TMS("Name",
+			"http://127.0.0.1:8080/webmap/openlayers/",
+			{
+				'type':'png',
+				'getURL':get_my_url				
+			}		
+	
+	);
+	
+	map.addLayer(layer);
+	
+	//map.addControl(new OpenLayers.Control.Scale());
+	//map.addControl(new OpenLayers.Control.MousePosition());
+	
+	var lonlat = new OpenLayers.LonLat(116.397743,39.908419);
+	lonlat.transform(map.displayProjection,map.getProjectionObject());
+	map.setCenter(lonlat,12);
+
+}
+
+	function get_my_url(bounds){
+		
+		var res = this.map.getResolution();
+		var x = Math.round((bounds.left- this.maxExtent.left)/(res*this.tileSize.w));
+		var y = Math.round((this.maxExtent.top-bounds.top)/(res*this.tileSize.h));
+		var z = this.map.getZoom();
+		
+		var path = "map-imgs/"+"lyrs=m@216000000&hl=zh-CN&gl=CN&src=app&s=Galileo"
+		+"&x="+x+"&y="+y+"&z="+z+"."+this.type;
+		
+		
+		
+		var url = this.url;
+		if( url instanceof Array ){
+			
+			url = this.selectUrl(path,url);
+			
+		}
+
+		return url+path;
+	}
+
+</script>
+</head>
+<body onload="init();">
+<div id="map" style="width:100%;height:100%"></div>
+</body>
+</html>

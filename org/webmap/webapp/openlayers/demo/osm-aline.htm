@@ -1,0 +1,69 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>osm aline</title>
+<!-- 加载OpenLayers 类库 -->
+<script type="text/javascript" src="OpenLayers.js"></script>
+<style>
+html,body {width:100%;height:100%;margin:0;padding:0}
+</style>
+<!-- 关键代码 -->
+<script type="text/javascript">
+var vector_point,geojson;
+function init(){
+	var map = new OpenLayers.Map("map");
+	
+	//创建一个 OpenStreetMap 的层，并加到地图map中
+	var osm = new OpenLayers.Layer.OSM();
+	map.addLayer(osm);
+	
+	//创建绘图层，用来展示我们从后台拿到的轨迹动画数据
+	vector_point = new OpenLayers.Layer.Vector();
+	map.addLayer(vector_point);
+	//创建GeoJSON处理类对象，用于解析JSON串
+	geojson = new OpenLayers.Format.GeoJSON();
+	
+	map.zoomToMaxExtent();
+}
+
+var i = 0;
+var step = 10000;
+function move(){
+	i=i+step;
+	//通过ajax调用服务端获取geojson数据,demo中模拟假设得到了返回的数据
+	var data = {
+			"type":"FeatureCollection",
+			"features":[{
+				"type":"Feature",
+				"geometry":{
+					"type":"LineString",
+					"coordinates":[
+					               [i-step,i-step],
+					               [i,i]
+					               ]
+				}
+			}]
+	};
+	//通过OpenLayers.Format.GeoJSON处理服务器提供的GeoJson串
+	var features = geojson.read(data,"FeatureCollection");
+	if (features){
+		//将结果展示在地图上
+		vector_point.addFeatures(features);
+	}
+
+}
+
+//每隔一秒更新一次数据
+function startMove(){
+	
+	var t = setTimeout("move();startMove();",1000);
+	
+}
+</script>
+</head>
+<body onload="init()">
+<div id="map" style="width:100%;height:100%"></div>
+<input type=button onclick="startMove();" value="showme">
+
+</body>
+</html>

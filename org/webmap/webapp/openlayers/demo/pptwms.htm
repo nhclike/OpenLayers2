@@ -1,0 +1,25 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>map</title>
+<script src="http://openlayers.org/api/OpenLayers.js"></script>
+</head>
+<body>
+<div style="width:100%;height:100%" id="map"></div>
+<script defer="defer" type="text/javascript">
+
+//定义一个map对象，关联到div id=“map”中
+var map = new OpenLayers.Map("map");
+//定义一个wms的地图层
+var wms = new OpenLayers.Layer.WMS("OpenLayers WMS",
+		"http://vmap0.tiles.osgeo.org/wms/vmap0",
+		{layers:"basic"});
+//将wms图层加到map中
+map.addLayer(wms);
+//放大视野，可以看到全图
+map.zoomToMaxExtent();
+
+</script>
+
+</body>
+</html>
